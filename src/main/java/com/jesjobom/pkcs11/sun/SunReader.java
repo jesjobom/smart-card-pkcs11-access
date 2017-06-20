@@ -20,7 +20,7 @@ import sun.security.pkcs11.SunPKCS11;
 /**
  * Smart card reader using Sun's implementation. On Windows x64, Java 7 needs to
  * be 32 bits. Java 8+ should be fine either on 32 or 64 bits. Java 7 does not
- * include Sun's implementation for 64 bits since it was not homologated be
+ * include Sun's implementation for 64 bits since it was not homologated.
  *
  * @author jesjobom
  */

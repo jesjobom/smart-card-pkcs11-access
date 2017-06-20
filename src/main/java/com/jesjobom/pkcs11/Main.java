@@ -1,5 +1,6 @@
 package com.jesjobom.pkcs11;
 
+import com.jesjobom.pkcs11.jna.NativeReader;
 import com.jesjobom.pkcs11.sun.SunReader;
 import com.jesjobom.pkcs11.utils.NativeLibsUtils;
 import java.security.InvalidParameterException;
@@ -33,6 +34,10 @@ public class Main {
 			throw new InvalidParameterException("No PKCS11 native library was found. Check the expected libraries on 'com.jesjobom.pkcs11.NativeLibsUtils'");
 		}
 		
+		LOGGER.info(" === BEGIN SMART CARD ACCESS ===");
+		
+		LOGGER.info(" === USING SUN'S IMPLEMENTATION ===");
+		
 		String pinCode = args[0];
 		SmartCardReader reader = new SunReader(libs.toArray(new String[0]));
 		reader.initialize(pinCode);
@@ -40,5 +45,16 @@ public class Main {
 		
 		LOGGER.info(label);
 		
+		LOGGER.info("");
+		LOGGER.info(" === USING JNA ===");
+		
+		reader = new NativeReader(libs.toArray(new String[0]));
+		reader.initialize(args);
+		label = reader.getLabel();
+		
+		LOGGER.info(label);
+		
+		LOGGER.info(" === END OF SMART CARD ACCESS ===");
+		System.exit(0);
 	}
 }
