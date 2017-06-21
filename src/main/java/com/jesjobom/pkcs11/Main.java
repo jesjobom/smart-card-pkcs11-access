@@ -19,14 +19,15 @@ public class Main {
 	/**
 	 * Test the access to the certificate of the PKCS11 Smart Card.
 	 * The Pin code is requested from the Sun's implemention of the PKCS11.
+	 * But <code>null</code> is accepted to try the access without PIN.
 	 * 
 	 * @param args where args[0] should be the PIN
 	 */
 	public static void main(String[] args) {
 		if(args == null || args.length == 0) {
-			LOGGER.info("The PIN Code is expected as a parameter.");
-			LOGGER.info("try 'java Main p123' where p123 is the PIN Code.");
-			System.exit(0);
+			LOGGER.warn("The PIN Code is expected as a parameter.");
+			LOGGER.warn("try 'java Main p123' where p123 is the PIN Code.");
+			LOGGER.warn("A 'null' pin will be used now, but it'll fail.");
 		}
 		
 		List<String> libs = NativeLibsUtils.getAvailableLibs();
@@ -38,23 +39,28 @@ public class Main {
 		
 		LOGGER.info(" === USING SUN'S IMPLEMENTATION ===");
 		
-		String pinCode = args[0];
-		SmartCardReader reader = new SunReader(libs.toArray(new String[0]));
-		reader.initialize(pinCode);
-		String label = reader.getLabel();
+		try {
+			//Access via Sun's version of PKCS11, for some reason, 
+			//hangs the application for some time... dont know why yet
+			SmartCardReader reader = new SunReader(libs.toArray(new String[0]));
+			reader.initialize(args);
+			String label = reader.getLabel();
 		
-		LOGGER.info(label);
+			LOGGER.info(label);
+			
+		} catch (Exception ex) {
+			LOGGER.error("Failed to access the smart card.", ex);
+		}
 		
 		LOGGER.info("");
 		LOGGER.info(" === USING JNA ===");
 		
-		reader = new NativeReader(libs.toArray(new String[0]));
+		SmartCardReader reader = new NativeReader(libs.toArray(new String[0]));
 		reader.initialize(args);
-		label = reader.getLabel();
+		String label = reader.getLabel();
 		
 		LOGGER.info(label);
 		
 		LOGGER.info(" === END OF SMART CARD ACCESS ===");
-		System.exit(0);
 	}
 }

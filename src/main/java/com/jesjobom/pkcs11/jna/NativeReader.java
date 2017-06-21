@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class NativeReader extends SmartCardReader {
 
-	private static final Logger LOGGER = LogManager.getLogger(SmartCardReader.class);
+	private static final Logger LOGGER = LogManager.getLogger(NativeReader.class);
 	
 	public NativeReader(String... libs) {
 		super(libs);

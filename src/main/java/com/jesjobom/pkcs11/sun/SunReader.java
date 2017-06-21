@@ -3,7 +3,6 @@ package com.jesjobom.pkcs11.sun;
 import com.jesjobom.pkcs11.SmartCardReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.InvalidParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -12,6 +11,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.List;
+import javax.security.auth.login.LoginException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,11 +36,7 @@ public class SunReader extends SmartCardReader {
 
 	@Override
 	public void initialize(String... args) {
-		if (args == null || args.length == 0) {
-			throw new InvalidParameterException("The Smart Card PIN is needed to access the certificates.");
-		}
-
-		this.pin = args[0];
+		this.pin = args == null || args.length == 0 ? null : args[0];
 	}
 
 	@Override
@@ -56,7 +52,7 @@ public class SunReader extends SmartCardReader {
 		}
 
 		if (keystore == null) {
-			throw new NullPointerException("None of the libraries found were able to load the keystore from the Smart Card.");
+			throw new RuntimeException("None of the libraries found were able to load the keystore from the Smart Card.");
 		}
 
 		X509Certificate certificate;
@@ -67,7 +63,7 @@ public class SunReader extends SmartCardReader {
 			throw new RuntimeException(ex);
 		}
 		
-		return certificate.getSubjectDN().getName();
+		return certificate.getSubjectX500Principal().getName();
 	}
 
 	/**
@@ -79,9 +75,13 @@ public class SunReader extends SmartCardReader {
 	 * @return {@link KeyStore}
 	 */
 	private KeyStore loadKeystore(String lib) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-		Provider provider = new SunPKCS11(new ByteArrayInputStream(generatePkcs11Config(lib).getBytes()));
+		SunPKCS11 provider = new SunPKCS11(new ByteArrayInputStream(generatePkcs11Config(lib).getBytes()));
 		KeyStore keyStore = KeyStore.getInstance("PKCS11", provider);
-		keyStore.load(null, pin.toCharArray());
+		keyStore.load(null, pin == null ? null : pin.toCharArray());
+		try {
+			provider.logout();
+		} catch (LoginException ex) {
+		}
 		return keyStore;
 	}
 
