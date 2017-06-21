@@ -20,7 +20,7 @@ It is easy to use, especially if you have experience with Keystores and Certific
 ## Own PKCS11 Implementation 
 Since I needed to access some public certificates information without the pin code and SunPKCS11 wouldn't help me, I searched a bit by Wrappers in Java that wouldn't need a custom native part.
 I found the [IAIK PKCS11 Wrapper](https://github.com/mikma/pkcs11wrapper), but it has some native C codes that need compiling and the newer version is commercial and paid.
-Luckly there is this [JNA PKCS11 Wrapper](https://github.com/joelhockey/jacknji11) that is pretty complete and gave me the understanding to overcome some memory allocation problems when using structres.
+Luckly there is this [JNA PKCS11 Wrapper](https://github.com/joelhockey/jacknji11) that is pretty complete and gave me the understanding to overcome some memory allocation problems when using structures.
 
 #### Caracteristics
 - based on the [PKCS11 specification version 2.4](http://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html)
