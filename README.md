@@ -29,7 +29,22 @@ Luckly there is this [JNA PKCS11 Wrapper](https://github.com/joelhockey/jacknji1
 #### On the bright side
 - Uses [JNA](https://github.com/java-native-access/jna), not JNI
 - Works with Java < 8 on JRE 64 bits on Windows
+- The pin code is only needed to access private certificates for signing or for writing opperations
 
 #### On the dark side
 - Harder to use
-- Needs deep control over memory allocation when calling native methods
+- Needs deep control over memory allocation when calling native methods and using structures
+
+## Example of Use
+```
+# mvn "-Dexec.args=-classpath %classpath com.jesjobom.pkcs11.Main PinCode123" -Dexec.executable=$JAVA_HOME/bin/java org.codehaus.mojo:exec-maven-plugin:1.2.1:exec
+...                                                                        
+14:56:05.883 [main] INFO  com.jesjobom.pkcs11.Main -  === BEGIN SMART CARD ACCESS ===
+14:56:05.885 [main] INFO  com.jesjobom.pkcs11.Main -  === USING SUN'S IMPLEMENTATION ===
+14:56:08.709 [main] INFO  com.jesjobom.pkcs11.Main - CN=JONH SNOW PARKER:123456789,OU=AR SERASA,OU=(EM BRANCO),OU=RFB e-CPF A3,OU=Secretaria da Receita Federal do Brasil - RFB,O=ICP-Brasil,C=BR
+14:56:08.709 [main] INFO  com.jesjobom.pkcs11.Main - 
+14:56:08.710 [main] INFO  com.jesjobom.pkcs11.Main -  === USING JNA ===
+14:56:09.163 [main] INFO  com.jesjobom.pkcs11.Main - JONH SNOW PARKER:123456789
+14:56:09.163 [main] INFO  com.jesjobom.pkcs11.Main -  === END OF SMART CARD ACCESS ===
+...
+```
